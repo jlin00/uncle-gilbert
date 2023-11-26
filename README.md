@@ -1,4 +1,7 @@
 # Using Non-Traditional Contrastive Learning for Generalizable Interdomain Learning with BERT
+## Data
+- [Amazon Product Reviews](https://nijianmo.github.io/amazon/index.html)
+    - Categories with too many reviews were excluded for computational ease 
 
 ## Instructions for Local Development 
 1. First, create and activate a virtual environment if you have not already done so: 
