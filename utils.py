@@ -1,23 +1,22 @@
 import os
 import random
+from typing import List, Tuple
 
 import pandas as pd
 import numpy as np 
 from sklearn.model_selection import train_test_split
 import torch
 from torch.utils.data import TensorDataset
-from transformers import DistilBertTokenizer
+from transformers import DistilBertTokenizerFast
 
-# Constants
 random.seed(6806)
 random_state = 6806
 
-# Get and process data
-def get_csv_file_paths():
+def get_csv_file_paths() -> List[str]:
     """Return the paths of all CSVs"""
     return [f"./data/{file}" for file in os.listdir("./data") if file.endswith(".csv")]
 
-def create_initial_dataset():
+def create_initial_dataframe() -> pd.DataFrame:
     """Create initial dataset with all reviews"""
     csv_files = get_csv_file_paths()
     dfs = [] 
@@ -34,20 +33,53 @@ def create_initial_dataset():
     df = df[df["overall"] != 3] # Drop neutral/indeterminate reviews
     df["is_positive"] = df["overall"] > 3
     df["is_positive"] = df["is_positive"].astype(int)
+    df = df[df["reviewText"].str.strip().str.len() > 0] # Drop empty reviews
 
     return df 
 
-def create_tokenized_dataset():
+def get_all_source_domains() -> List[str]:
+    """Return a list of all source domains"""
+    return [
+        "arts_crafts_and_sewing", 
+        "musical_instruments", 
+        "digital_music"
+    ]
+
+def get_source_domains(count: int) -> List[str]:
+    """Return a list of source domains, up until `count`"""
+    source_domains = get_all_source_domains() 
+    assert count <= len(source_domains), "count cannot be greater than number of source domains"
+    return source_domains[:count]
+
+def get_all_target_domains() -> List[str]:
+    """Return a list of all target domains"""
+    return [
+        "luxury_beauty", 
+        "software", 
+        "prime_pantry", 
+        "industrial_and_scientific", 
+        "gift_cards",
+        "all_beauty", 
+        "magazine_subscriptions", 
+        "appliances", 
+        "amazon_fashion"
+    ]
+
+def split(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Split dataframe into train and validation/test dataset (70-30)"""
+    df1, df2 = train_test_split(df, test_size=0.3, random_state=random_state)
+    return df1, df2
+
+def create_tokenized_dataset(df: pd.DataFrame) -> TensorDataset:
     """Create tokenized dataset with all reviews"""
-    df = create_initial_dataset()
-    tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-cased")
+    tokenizer = DistilBertTokenizerFast.from_pretrained("distilbert-base-cased")
 
     encodings = tokenizer(
-        list(df["reviewText"].str.split()), 
+        list(df["reviewText"]), 
         add_special_tokens=True,
         padding="max_length",
+        max_length=512,
         truncation=True,
-        is_split_into_words=True,
         return_tensors="pt",
         return_attention_mask=True,
     )
@@ -58,39 +90,7 @@ def create_tokenized_dataset():
 
     return tokenized_dataset
 
-# Divide dataset
-def get_all_source_domains():
-    """Return a list of all source domains"""
-    return [
-        "arts_crafts_and_sewing", 
-        "musical_instruments", 
-        "digital_music"
-    ]
-
-def get_source_domains(count):
-    """Return a list of source domains, up until `count`"""
-    source_domains = get_all_source_domains() 
-    assert count <= len(source_domains), "count cannot be greater than number of source domains"
-    return source_domains[:count]
-
-def get_all_target_domains():
-    """Return a list of all target domains"""
-    return [
-        "luxury_beauty", 
-        "software", 
-        "arts_crafts_and_sewing",
-        "prime_pantry", 
-        "industrial_and_scientific", 
-        "gift_cards",
-        "all_beauty", 
-        "magazine_subscriptions", 
-        "digital_music",
-        "appliances", 
-        "musical_instruments",
-        "amazon_fashion"
-    ]
-
-def split(df):
-    """Split dataframe into train and validation/test dataset (70-30)"""
-    df1, df2 = train_test_split(df, test_size=0.3, random_state=random_state)
-    return df1, df2
+def accuracy(expected, actual):
+    actual_flat = np.argmax(actual, axis=1).flatten()
+    expected_flat = expected.flatten()
+    return np.sum(actual_flat == expected_flat) / len(expected_flat)
