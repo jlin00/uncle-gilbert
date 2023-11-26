@@ -12,7 +12,7 @@ $ . ~/venv_name/bin/activate
 
 2. Install the necessary dependencies for the project: 
 ```
-(venv_name)$ pip install -r doc/requirements.txt
+(venv_name)$ pip install -r requirements.txt
 ```
 
 You may instead choose to run the project in Google Colab instead. [Here](https://saturncloud.io/blog/how-can-i-run-notebooks-of-a-github-project-in-google-colab/) are the relevant instructions. 
