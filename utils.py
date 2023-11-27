@@ -14,7 +14,7 @@ random_state = 6806
 
 def get_csv_file_paths() -> List[str]:
     """Return the paths of all CSVs"""
-    return [f"./data/{file}" for file in os.listdir("./data") if file.endswith(".csv")]
+    return [f"lib/data/{file}" for file in os.listdir("lib/data") if file.endswith(".csv")]
 
 def create_initial_dataframe() -> pd.DataFrame:
     """Create initial dataset with all reviews"""
