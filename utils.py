@@ -23,17 +23,24 @@ def create_initial_dataframe() -> pd.DataFrame:
 
     for path in csv_files:
         df = pd.read_csv(path, index_col=[0])
+
+        # Preprocessing 
+        df = df.drop_duplicates() 
+        df = df[df["overall"] != 3] # Exclude neutral/undetermined reviews
+        df = df[(df["reviewText"].str.split().str.len() > 0) & (df["reviewText"].str.split().str.len() <= 250)] # Exclude empty reviews and reviews that are too long
+        
         category = path.split("/")[-1][:-4]
         df["category"] = category
+        df["is_positive"] = df["overall"] > 3
+        df["is_positive"] = df["is_positive"].astype(int)
+
+        # Work with a small sample of large dataframes 
+        if len(df) > 30000:
+            df = df.sample(30000, random_state=random_state)
+
         dfs.append(df)
 
     df = pd.concat(dfs, axis=0)
-
-    # Preprocessing
-    df = df[df["overall"] != 3] # Drop neutral/indeterminate reviews
-    df["is_positive"] = df["overall"] > 3
-    df["is_positive"] = df["is_positive"].astype(int)
-    df = df[df["reviewText"].str.strip().str.len() > 0] # Drop empty reviews
 
     return df 
 
