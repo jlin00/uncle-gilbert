@@ -91,6 +91,7 @@ def create_tokenized_dataset(df: pd.DataFrame) -> TensorDataset:
     return tokenized_dataset
 
 def accuracy(expected, actual):
+    """Calculate classification accuracy"""
     actual_flat = np.argmax(actual, axis=1).flatten()
     expected_flat = expected.flatten()
     return np.sum(actual_flat == expected_flat) / len(expected_flat)
