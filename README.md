@@ -1,5 +1,5 @@
 # Using Non-Traditional Contrastive Learning for Generalizable Interdomain Learning with BERT
-This repository contains documentation and shared utilities for in the UNCLe GILBERT project. 
+This repository contains documentation, shared utilities, and miscellaneous experiments for in the UNCLe GILBERT project. 
 
 ## Data
 - [Amazon Product Reviews](https://nijianmo.github.io/amazon/index.html)

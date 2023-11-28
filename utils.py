@@ -27,7 +27,7 @@ def create_initial_dataframe() -> pd.DataFrame:
         # Preprocessing 
         df = df.drop_duplicates() 
         df = df[df["overall"] != 3] # Exclude neutral/undetermined reviews
-        df = df[(df["reviewText"].str.split().str.len() > 0) & (df["reviewText"].str.split().str.len() <= 250)] # Exclude empty reviews and reviews that are too long
+        df = df[(df["reviewText"].str.split().str.len() > 0) & (df["reviewText"].str.split().str.len() <= 100)] # Exclude empty reviews and reviews that are too long
         
         category = path.split("/")[-1][:-4]
         df["category"] = category
@@ -35,8 +35,8 @@ def create_initial_dataframe() -> pd.DataFrame:
         df["is_positive"] = df["is_positive"].astype(int)
 
         # Work with a small sample of large dataframes 
-        if len(df) > 30000:
-            df = df.sample(30000, random_state=random_state)
+        if len(df) > 10000:
+            df = df.sample(10000, random_state=random_state)
 
         dfs.append(df)
 
@@ -85,7 +85,7 @@ def create_tokenized_dataset(df: pd.DataFrame) -> TensorDataset:
         list(df["reviewText"]), 
         add_special_tokens=True,
         padding="max_length",
-        max_length=512,
+        max_length=128,
         truncation=True,
         return_tensors="pt",
         return_attention_mask=True,
