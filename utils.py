@@ -26,12 +26,11 @@ def create_initial_dataframe() -> pd.DataFrame:
 
         # Preprocessing 
         df = df.drop_duplicates() 
-        df = df[df["overall"] != 3] # Exclude neutral/undetermined reviews
         df = df[(df["reviewText"].str.split().str.len() > 0) & (df["reviewText"].str.split().str.len() <= 100)] # Exclude empty reviews and reviews that are too long
         
         category = path.split("/")[-1][:-4]
         df["category"] = category
-        df["is_positive"] = df["overall"] > 3
+        df["is_positive"] = df["overall"] > 3 # Assume a rating of 3.0 to be negative
         df["is_positive"] = df["is_positive"].astype(int)
 
         # Work with a small sample of large dataframes 
