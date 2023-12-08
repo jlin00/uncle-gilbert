@@ -84,12 +84,12 @@ def split(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     df1, df2 = train_test_split(df, test_size=0.3, random_state=random_state)
     return df1, df2
 
-def create_tokenized_dataset(df: pd.DataFrame) -> TensorDataset:
+def create_tokenized_dataset(df: pd.DataFrame, column: str = "reviewText") -> TensorDataset:
     """Create tokenized dataset with all reviews"""
     tokenizer = DistilBertTokenizerFast.from_pretrained("distilbert-base-cased")
 
     encodings = tokenizer(
-        list(df["reviewText"]), 
+        list(df[column]), 
         add_special_tokens=True,
         padding="max_length",
         max_length=128,
