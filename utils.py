@@ -53,8 +53,9 @@ def get_source_domains(count: int) -> List[str]:
     count = min(count, len(source_domains))
     return source_domains[:count]
 
-def get_target_domains(exclude_hard) -> List[str]:
+def get_target_domains(subset="all") -> List[str]:
     """Return a list of all target domains"""
+    assert subset in ["all", "easy", "hard"]
     easy_target_domains = [
         "luxury_beauty", 
         "software", 
@@ -71,9 +72,11 @@ def get_target_domains(exclude_hard) -> List[str]:
         "webmd"
     ]
 
-    if exclude_hard:
-        return easy_target_domains
-    return easy_target_domains + hard_target_domains
+    if subset == "all":
+        return easy_target_domains + hard_target_domains
+    elif subset == "easy":
+        return easy_target_domains 
+    return hard_target_domains 
 
 
 def split(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
