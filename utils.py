@@ -22,7 +22,7 @@ def create_initial_dataframe() -> pd.DataFrame:
     dfs = [] 
 
     for path in csv_files:
-        df = pd.read_csv(path, index_col=[0])
+        df = pd.read_csv(path)
 
         # Preprocessing 
         df = df.drop_duplicates() 
@@ -40,6 +40,8 @@ def create_initial_dataframe() -> pd.DataFrame:
         dfs.append(df)
 
     df = pd.concat(dfs, axis=0)
+    df = df.reset_index()
+    df = df.drop(columns="index")
 
     return df 
 
