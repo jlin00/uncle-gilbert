@@ -43,23 +43,19 @@ def create_initial_dataframe() -> pd.DataFrame:
 
     return df 
 
-def get_all_source_domains() -> List[str]:
-    """Return a list of all source domains"""
-    return [
+def get_source_domains(count: int) -> List[str]:
+    """Return a list of source domains, up until `count`"""
+    source_domains = [
         "arts_crafts_and_sewing", 
         "musical_instruments", 
         "digital_music"
     ]
-
-def get_source_domains(count: int) -> List[str]:
-    """Return a list of source domains, up until `count`"""
-    source_domains = get_all_source_domains() 
-    assert count <= len(source_domains), "count cannot be greater than number of source domains"
+    count = min(count, len(source_domains))
     return source_domains[:count]
 
-def get_all_target_domains() -> List[str]:
+def get_target_domains(exclude_hard) -> List[str]:
     """Return a list of all target domains"""
-    return [
+    easy_target_domains = [
         "luxury_beauty", 
         "software", 
         "prime_pantry", 
@@ -70,6 +66,15 @@ def get_all_target_domains() -> List[str]:
         "appliances", 
         "amazon_fashion"
     ]
+
+    hard_target_domains = [
+        "webmd"
+    ]
+
+    if exclude_hard:
+        return easy_target_domains
+    return easy_target_domains + hard_target_domains
+
 
 def split(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Split dataframe into train and validation/test dataset (70-30)"""
